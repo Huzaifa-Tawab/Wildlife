@@ -1,0 +1,40 @@
+@keyframes Loadinganim {
+  from {
+    transform: scalex(0);
+  }
+  to {
+    transform: scalex(1);
+  }
+}
+@keyframes Rotatingborder {
+  0% {
+    /* border: 5px solid red; */
+    border-bottom: 1px solid red;
+  }
+  25% {
+    border-bottom: 2px solid red;
+  }
+  50% {
+    border-bottom: 3px solid red;
+  }
+  70% {
+    border-bottom: 2px solid red;
+  }
+  100% {
+    border-bottom: 1px solid red;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .loading_1sec {
+    position: absolute;
+    top: 0px;
+    width: 100vw;
+    height: 2.5px;
+    background: red;
+    animation: Loadinganim infinite 5s linear;
+  }
+  /* .espmaininfo {
+    animation: Rotatingborder infinite 1s linear;
+  } */
+}
