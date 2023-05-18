@@ -13,13 +13,13 @@ function ESPCard(props) {
   return (
     <Card style={{ width: "25rem", height: "30rem" }}>
       <Card.Body>
-        {/* {props.Name}
+        {props.Name}
         {props.UID}
         {props.DeciceID}
         {props.Dics}
         {props.AdultFemales}
         {props.AdultMales}
-        {props.Youngs} */}
+        {props.Youngs}
 
         <Card.Title className="spsbtwn">
           {/* <Button variant="primary">

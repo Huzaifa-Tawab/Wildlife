@@ -52,23 +52,20 @@ function Update(props) {
           Device: Device,
           Name: AName,
           Decs: Description,
-          //   No_Male: Male,
-          //   No_Female: Female,
-          //   No_Young: Age,
+          No_Male: Male,
+          No_Female: Female,
+          No_Young: Age,
         });
         setLogs("Device Updated Successfully");
         window.location.reload(false);
       } catch (e) {
         setLogType("danger");
-
         setLogs("Error: " + e);
       }
     } else {
       setLogType("danger");
-
       setLogs("Cannot Be empty");
     }
-
     setAllertShow(true);
   }
   return (
@@ -79,7 +76,7 @@ function Update(props) {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Add New</Modal.Title>
+          <Modal.Title>Update</Modal.Title>
         </Modal.Header>
         {showAllert ? (
           <Alert

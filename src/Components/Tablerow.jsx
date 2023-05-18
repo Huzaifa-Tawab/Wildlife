@@ -1,40 +1,35 @@
 import { React, useState } from "react";
-import TableUpdate from "./TableData";
 import { Alert, Col, Modal, Row } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
+import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import FirebaseInit from "../FireBase/FirebaseAuth";
 
 function Tablerow(props) {
   const db = getFirestore(FirebaseInit);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [Name, setName] = useState("");
-  const [Date, setDate] = useState("");
-  const [Device, setDevice] = useState("");
-  const [NextVac, setNextVac] = useState("");
+  const [Name, setName] = useState(props.name);
+  const [Date, setDate] = useState(props.date);
+  const [NextVac, setNextVac] = useState(props.next);
   const [show, setShow] = useState(false);
   const [Logs, setLogs] = useState("");
   const [LogType, setLogType] = useState("");
   const [showAllert, setAllertShow] = useState(false);
   const id = props.colid;
   const docid = props.docid;
-  const name = props.name;
-  const date = props.date;
-  const nextvac = props.next;
 
-  //New Device
-  function AddDeviceNew() {
+  //Update Data
+  async function UpdateData() {
     try {
-      const docRef = addDoc(collection(db, id), {
-        Name: name,
-        Date: date,
-        NextDate: nextvac,
+      console.log("ID" + id);
+      console.log("DID" + docid);
+      const Docref = doc(db, id, docid);
+      await updateDoc(Docref, {
+        Name: Name,
+        Date: Date,
+        NextDate: NextVac,
       });
-      console.log(docRef);
-      setLogs("New Device Added");
-      window.location.reload(false);
     } catch (e) {
       setLogType("danger");
       setLogs("Error: " + e);
@@ -52,16 +47,16 @@ function Tablerow(props) {
         </button> */}
 
         <div className="col1">
-          <span>{name}</span>
+          <span>{Name}</span>
         </div>
         <div className="col2">
-          <span>{date}</span>
+          <span>{Date}</span>
         </div>
         <div className="col3">
-          <span>{nextvac}</span>
+          <span>{NextVac}</span>
         </div>
         <div className="col4">
-          <TableUpdate />
+          <button onClick={handleShow}> test</button>
         </div>
       </div>
 
@@ -92,6 +87,7 @@ function Tablerow(props) {
                     <Form.Control
                       type="text"
                       placeholder="Vaccine Name"
+                      value={Name}
                       onChange={(e) => setName(e.target.value)}
                     />
                   </Col>
@@ -99,6 +95,7 @@ function Tablerow(props) {
                     <Form.Control
                       type="datetime"
                       placeholder="Date"
+                      value={Date}
                       onChange={(e) => setDate(e.target.value)}
                     />
                   </Col>
@@ -106,6 +103,7 @@ function Tablerow(props) {
                     <Form.Control
                       type="datetime"
                       placeholder="Next Vaccine"
+                      value={NextVac}
                       onChange={(e) => setNextVac(e.target.value)}
                     />
                   </Col>
@@ -117,7 +115,7 @@ function Tablerow(props) {
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={AddDeviceNew}>
+            <Button variant="primary" onClick={UpdateData}>
               Add
             </Button>
           </Modal.Footer>

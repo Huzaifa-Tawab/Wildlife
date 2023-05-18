@@ -6,6 +6,7 @@ import {
   getFirestore,
   getDoc,
   doc,
+  addDoc,
 } from "firebase/firestore";
 import { Alert, Col, Form, Modal, Row, Button } from "react-bootstrap";
 
@@ -17,15 +18,22 @@ import Update from "../Components/update";
 import Loader from "../Components/Loader";
 import Tablerow from "../Components/Tablerow";
 
-function SingleESPData() {
+function SingleESPData(props) {
   FirebaseInit;
   const dbRef = ref(getDatabase());
   const [Fire, setFire] = useState(false);
   const [OutTemp, setOutTemp] = useState(0);
+  const [COlevel, setCOlevel] = useState(0);
   const [OutHumid, setOutHumid] = useState(0);
   const [NewData, setNewData] = useState();
   const [isLoading, setisLoading] = useState();
   const [Show, setShow] = useState(false);
+  const [Name, setName] = useState("");
+  const [Date, setDate] = useState("");
+  const [NextVac, setNextVac] = useState("");
+  const [showAllert, setAllertShow] = useState(false);
+  const [LogType, setLogType] = useState("");
+  const [Logs, setLogs] = useState("");
   const { state } = useLocation();
   const { Uid, name, Deviceid } = state; // Read values passed on state
   const db = getFirestore(FirebaseInit);
@@ -40,12 +48,12 @@ function SingleESPData() {
   useEffect(() => {
     FetchData();
     console.log(Uid);
-    // const interval = setInterval(() => {
-    //   setOutHumid(0);
-    //   setOutTemp(0);
-    //   getDataFromFirebase();
-    // }, 5000);
-    // return () => clearInterval(interval);
+    const interval = setInterval(() => {
+      setOutHumid(0);
+      setOutTemp(0);
+      getDataFromFirebase();
+    }, 5000);
+    return () => clearInterval(interval);
   }, [1]);
 
   async function FetchData() {
@@ -57,7 +65,7 @@ function SingleESPData() {
       // console.log("id " + doc.id);
       list.push({
         UID: doc.id,
-        Name: doc.data().Name,
+        Name: doc.data().vac,
         Date: doc.data().Date,
         Next_Date: doc.data().NextDate,
       });
@@ -77,6 +85,7 @@ function SingleESPData() {
           setFire(snapshot.val().Fire);
           setOutHumid(snapshot.val().Out_H);
           setOutTemp(snapshot.val().Out_T);
+          setCOlevel(snapshot.val().CO);
         } else {
           console.log("No data available");
         }
@@ -84,6 +93,24 @@ function SingleESPData() {
       .catch((error) => {
         console.error(error);
       });
+    //New Device
+  }
+  function AddNewVac() {
+    try {
+      const docRef = addDoc(collection(db, Uid), {
+        Name: Name,
+        Date: Date,
+        NextDate: NextVac,
+      });
+      console.log(docRef);
+      setLogs("New Device Added");
+      window.location.reload(false);
+    } catch (e) {
+      setLogType("danger");
+      setLogs("Error: " + e);
+    }
+
+    setAllertShow(true);
   }
 
   return (
@@ -108,12 +135,13 @@ function SingleESPData() {
       <p>Fire : {Fire ? "Yess" : "No"}</p>
       <p>Temperature : {OutTemp} ℃</p>
       <p>Humidity: {OutHumid} %</p>
+      <p>CO PPM: {COlevel} PPM</p>
       <div className="box">{/* <EChart></EChart> */}</div>
 
       <div className="tablecard">
         {isLoading ? (
           <>
-            <Button onClick={handleShow}>hello</Button>
+            <Button onClick={handleShow}>Add Vac</Button>
             {NewData.map((item, i) => (
               <>
                 <Tablerow
@@ -141,7 +169,7 @@ function SingleESPData() {
           <Modal.Header closeButton>
             <Modal.Title>Add New</Modal.Title>
           </Modal.Header>
-          {/* {showAllert ? (
+          {showAllert ? (
             <Alert
               variant={LogType}
               onClose={() => setAllertShow(false)}
@@ -151,7 +179,7 @@ function SingleESPData() {
             </Alert>
           ) : (
             <></>
-          )} */}
+          )}
           <Modal.Body>
             <Form>
               <Form.Group
@@ -188,7 +216,9 @@ function SingleESPData() {
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary">Add</Button>
+            <Button variant="primary" onClick={AddNewVac}>
+              Add
+            </Button>
           </Modal.Footer>
         </Modal>
       </>
